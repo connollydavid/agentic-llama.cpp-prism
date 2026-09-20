@@ -1,0 +1,15 @@
+[submodule "host-template"]
+	path = host-template
+	url = https://github.com/connollydavid/host-template.git
+[submodule "tools/host-lint"]
+	path = tools/host-lint
+	url = https://github.com/connollydavid/host-lint.git
+[submodule "tools/host-lifecycle"]
+	path = tools/host-lifecycle
+	url = https://github.com/connollydavid/host-lifecycle.git
+[submodule "tools/allium"]
+	path = tools/allium
+	url = https://github.com/juxt/allium.git
+[submodule "tools/specula"]
+	path = tools/specula
+	url = https://github.com/specula-org/Specula.git
