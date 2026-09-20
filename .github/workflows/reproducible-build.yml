@@ -1,0 +1,38 @@
+# Reference workflow: prove the software's build is reproducible (the production
+# anchor). Software initiated under the methodology MUST reproduce; migrated software
+# may carry a `repro-waiver = call/NNNN` case decision, which `--verify-build` warns
+# on and skips. Replace the toolchain step with your component's pinned toolchain.
+name: Reproducible build
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # weekly drift check
+
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      # Every step below is gated on a `.host-software` existing. The bare template
+      # has no software to verify, so this job no-ops (success) on the template itself
+      # and runs fully once a project records a component. `hashFiles` is empty when
+      # the file is absent, so the guard is false on the template and true for adopters.
+      - name: Fetch the host-lifecycle tool
+        if: hashFiles('.host-software') != ''
+        run: git submodule update --init tools/host-lifecycle
+      - name: Build the tool
+        if: hashFiles('.host-software') != ''
+        run: cargo build --release --manifest-path tools/host-lifecycle/Cargo.toml
+      # --- Your software's pinned toolchain goes here (the `toolchain` you record in
+      #     .host-software). E.g. a fixed compiler/SDK so the rebuild is deterministic.
+      - name: Set up the pinned toolchain
+        if: hashFiles('.host-software') != ''
+        run: 'echo "Install the toolchain pinned in .host-software (project-specific)"'
+      - name: Materialize the software (bare store + worktrees)
+        if: hashFiles('.host-software') != ''
+        run: ./tools/host-lifecycle/target/release/host-lifecycle software --materialize .
+      - name: Verify reproducibility (rebuild from the pin; compare the artifact)
+        if: hashFiles('.host-software') != ''
+        run: ./tools/host-lifecycle/target/release/host-lifecycle software --verify-build .

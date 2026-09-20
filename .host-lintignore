@@ -1,0 +1,28 @@
+# Paths excluded from the reference sweep and the naming audit. The record layer is
+# excluded, never reworded.
+#
+# UPGRADING.md — the template's own record layer. It is the append-only ledger of
+# upgrade entries: an entry is written once, published, and thereafter read by adopters
+# at revisions we cannot see, so rewriting one changes what a mid-flight adopter is
+# checked against. That is the same reason `MEMORY.md` is excluded by construction.
+#
+# Its entries carry cross-project citations by nature ("Recorded as agentic-host
+# call/0046"), naming the register of the project that authored the change. Those
+# numbers belong to that project's rooms and resolve nowhere here, and there is
+# currently no form for a cross-project register reference that the sweep accepts:
+# bare, prefixed, and inside a markdown link all read as a reference into the local
+# room (connollydavid/host#19). Excluding the ledger is therefore the record-layer rule
+# applied, not a way around the finding; giving those citations an expressible form is
+# owed work, tracked in that issue.
+UPGRADING.md
+
+# This project: the record layer (MEMORY.md is the agent working memory), the
+# pinned reference PDFs, the materialized software trees, and the tool-written
+# receipt records. Excluded, never reworded.
+MEMORY.md
+refs/
+software/
+.zcode/
+.host-receipts
+.host-lifecycle-receipts
+.host-task-receipts
