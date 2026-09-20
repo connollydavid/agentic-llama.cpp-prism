@@ -89,3 +89,5 @@ tokens/s for the i9-10885H + TU117-class pairing.
 - verify: every command in the runbook is the one actually run here or a
   documented adaptation of it
 - depends: #curve-vs-prediction
+
+Postscript (same day): the interactive smoke was not captured cleanly (llama-cli interactive mode with piped stdio echoes instead of flushing text); bench-level validation stands, and the owed-work list gains a direct gemv-vs-reference unit test for the repack path alongside the decode-step profile and the optimized gemm.
