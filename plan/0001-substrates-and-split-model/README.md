@@ -1,4 +1,4 @@
-# plan/0001 — Substrates for the AVX/AVX2 CPU ladder and the 4 GiB Turing target, and the layer-split model
+# plan/0001, substrates for the SIMD ladder and the 4 GiB split model
 
 ## Why
 
