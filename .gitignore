@@ -14,7 +14,7 @@
 
 # Pinned reference material fetched by plan/0001 (Agner Fog PDFs are CC
 # BY-NC-ND: pinned by SHA256, never committed).
-/refs/
+/refs/agner/*.pdf
 
 # The ZCode harness working directory.
 /.zcode/
