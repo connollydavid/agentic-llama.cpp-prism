@@ -69,3 +69,9 @@
     reason = call/0004
     tool = host-lifecycle@0.54.2
     recorded = 2026-09-20
+
+[receipt "verify"]
+    disposition = done
+    evidence = validate plan/ call/ ok; software --check exit 0; prose + refs --gate green this commit
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20

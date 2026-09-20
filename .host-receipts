@@ -10,3 +10,9 @@ applied = LEM-address-direction recorded=2026-09-20 via=verify
 applied = LEM-exemplar-section recorded=2026-09-20 via=verify
 applied = LEM-lane-and-mcp recorded=2026-09-20 via=verify
 applied = LEM-pronoun-system recorded=2026-09-20 via=verify
+
+[receipt "upgrade"]
+    disposition = done
+    evidence = stamp migrated to baseline; 9 entries applied + LEM via pointer; REFS chain pending per call/0005
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
