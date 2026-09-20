@@ -30,6 +30,48 @@ of intuition is the point of this host.
 - Out of scope: kernel implementation (plan/0002 and plan/0003), the
   end-to-end 4 GiB emulation run (plan/0004).
 
+## Results (2026-09-20, sweep at examples/bonsai-split.rs @ bonsai-split f1b9de0)
+
+Model facts from the shipped GGUF tensor table (header parsed 2026-09-20):
+arch qwen35, 64 blocks, d_model 5120, FFN 17408, full attention every 4th
+layer (16 full-attn at 81.47 MB, 48 linear at 84.91 MB), output head 278.1 MB
+streamed per token, embedding read one row per token; 5.936 GB total.
+
+Anchor (local rig, stock pin build, `./build/bin/llama-bench -m
+/home/david/models/Ternary-Bonsai-2-27B-PTQ1_0.gguf -ngl 99 -p 512 -n 128
+-fa 1`): **tg128 31.84 tok/s, pp512 460.51 tok/s**. That tg number is the
+load-bearing finding: 5.66 GB in 31.5 ms is 180 GB/s, 0.30 of the card's 609
+GB/s measured DRAM, so PTQ1_0 batch-1 decode on Turing is
+instruction/launch-bound, not bandwidth-bound. The sweep's GPU axis is
+therefore a decode-effective rate anchored to this measurement (TU117 scales
+the instruction side by SM count, 16/72).
+
+Primary target (TU117-class 4 GiB, i9-10885H, context 8192): best feasible
+split ngl 37, predicted 5.35 tok/s with the vec_dot kernel alone, 6.55 with
+the repack path.
+
+Divergence matrix (best tok/s, vec_dot kernel vs repacked):
+
+| CPU | vec_dot | repacked | gain |
+|---|---|---|---|
+| i9-10885H (CML) | 5.35 | 6.55 | 1.22x |
+| i7-4670K (HSW) | 4.33 | 4.70 | 1.08x |
+| i7-2600K (SNB, AVX) | 2.62 | 4.06 | 1.55x |
+| Zen 1 1700-class | 4.80 | 6.25 | 1.30x |
+| Zen 2 3700X-class | 6.72 | 6.72 | 1.00x |
+| Zen 3 5800X-class | 6.80 | 6.80 | 1.00x |
+| Xeon W-2140B (local) | 6.24 | 10.99 | 1.76x |
+
+Kernel priority handed to plan/0002 and plan/0003: the vec_dot lands first
+(correctness and every non-repack path), the repack path follows as the
+compute-heavy decode win on CML/SNB/SKX (Pipe-bound legs there), while Zen
+2/3 sit at their memory bound already and prefill everywhere favors repack.
+The vec_dot budget is the landed kernel's design-based 90 uops per 28-byte
+block; the repack steady state is 8. The pure-GPU prediction at the anchored
+rate is 31.82 tok/s against the 31.84 measured.
+
+PQ2_0 comparison on the same card: pending the 7.21 GB download.
+
 ## Verification
 
 - `cargo test` green in the `bonsai-split` worktree, including the shipped

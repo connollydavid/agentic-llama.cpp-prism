@@ -26,6 +26,18 @@ Intel side, Zen 1 through Zen 3 on the AMD side.
 - Out of scope: the weight-repack path (plan/0003), AVX-only Sandy/Ivy
   kernels (plan/0006).
 
+## Results so far (2026-09-20)
+
+Both kernels landed on `avx2-port` (commit "cpu: AVX2 vec_dot kernels for
+PTQ1_0 and PQ2_0"): the PTQ1_0 AVX2 decode follows the reference staging
+exactly (16/8/2-element groups packed per q8_0 sub-block through
+packus/permute 0xD8), and the PQ2_0 plain-AVX2 branch mirrors the VNNI path
+with saturation-safe maddubs. The x86 arch-fallback alias retired.
+`test-quantize-fns` green on both types in the WSL2 CPU build (this machine,
+AVX2+AVX512 with no VNNI class, executes exactly the new branches).
+`test-backend-ops -b CPU` and the before/after bench: running, numbers land
+here when they complete.
+
 ## Verification
 
 The fork's own suites gate correctness (call/0002): `test-quantize-fns` and
