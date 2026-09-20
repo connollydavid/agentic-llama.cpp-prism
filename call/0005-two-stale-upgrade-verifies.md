@@ -20,7 +20,7 @@ resolves to it" and the lem pronoun-system section both stand in `AGENTS.md`.
 ## Decision
 
 - LEM-pronoun-system: recorded normally after the CLAUDE.md pointer was made
-  informative — it now names the manual's lem pronoun system and reference
+  informative: it now names the manual's lem pronoun system and reference
   discipline sections as the places those rules live. True of this tree, and
   the verify's grep reads it.
 - REFS-a-number-resolves (and its dependents GATE-refs-in-verify,

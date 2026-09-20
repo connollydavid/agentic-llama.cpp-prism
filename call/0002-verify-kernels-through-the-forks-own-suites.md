@@ -15,7 +15,7 @@ ships dense, cheap, directly-on-point correctness suites for exactly the code
 we are changing: `test-quantize-fns` (both ternary types against reference with
 a 0.01 error bound), `test-backend-ops` (mul_mat/get_rows for both types on
 every backend), `test-ptq1_0-element-map` (the CUDA trit mapping vs the CPU
-codec over 20,000 random blocks — the exact hazard a SIMD decode rewrite
+codec over 20,000 random blocks, which is the exact hazard a SIMD decode rewrite
 risks), and `test-ptq1_0-cuda-dot`. Performance claims are gated by
 `llama-bench` before/after runs recorded in the plan milestone, and by the
 calx-mill anchor registry (`calx-mill gate`), not by prose.
@@ -25,7 +25,7 @@ calx-mill anchor registry (`calx-mill gate`), not by prose.
 Kernel correctness is gated by the fork's existing suites, run in WSL2 from the
 `avx2-port` worktree (`ctest --test-dir build`), plus `cargo test` in calx-mill
 for the modeling side. No `.allium` spec is authored for the kernel work now;
-the lanes rule keeps its force — if a `.allium` appears later (for example to
+the lanes rule keeps its force: if a `.allium` appears later (for example to
 specify the runtime CPU-feature dispatch contract), its CI lane and obligations
 manifest arrive with it.
 

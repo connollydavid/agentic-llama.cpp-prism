@@ -1,3 +1,3 @@
 # plan/ — milestone index
 
-(milestones land with their decisions; the first is the calx-mill substrate and split model)
+- [0001 substrates and the split model](0001-substrates-and-split-model/README.md)
