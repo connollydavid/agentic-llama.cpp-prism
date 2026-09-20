@@ -51,10 +51,12 @@ VRAM per token across the sixteen full-attention layers.
 
 ## What to expect
 
-- Target machine prediction (plan/0001, anchored on the measured Turing
-  decode rate and the landed kernels): about 6.5 tok/s decode at batch 1,
-  memory-bound on both legs. CPU-only with the AVX2 kernels measured 1.81
-  tok/s tg32 on the 16-thread anchor rig against 0.13 before them.
-- Prefill currently runs the CPU-side layers on the generic gemm (the
-  optimized AVX2 gemm is plan/0003's owed work), so long prompts are the
-  slow part; GPU-resident layers prefill at the measured CUDA rates.
+Measured on the anchor rig emulating the 4 GiB budget (numbers and commands
+in this milestone's README): decode between 1.0 and 1.6 tok/s depending on
+the split (fewer GPU layers decoded faster: try ngl 32 alongside 37), and
+prefill around 250 tok/s at the split. The plan/0001 sweep's 6.5 tok/s
+prediction assumed a bandwidth-bound CPU leg; measurement shows the leg is
+per-op-overhead-bound at batch 1, and closing that gap (decode-step
+profiling, then the optimized gemm) is the owed work that moves the number.
+CPU-only with the AVX2 kernels: pp512 184.96 against the 174.58 scalar
+baseline; decode 0.27 (vec_dot) to 0.41 (repack on) against 0.13 before.
