@@ -21,3 +21,4 @@
 
 # The local environment fingerprint: this machine's state, never shared.
 .host-envhash
+/refs/agner/*.txt
