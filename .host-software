@@ -12,12 +12,12 @@
 	url      = https://github.com/slartibardfast/llama.cpp-prism-avx2.git
 	pin      = 9a9394a895b96003ca842a6041cb28ac49a108f7
 	branch   = master
-	worktree = avx2-port 9a9394a895b96003ca842a6041cb28ac49a108f7 store=/home/david/stores/llama.cpp-prism-avx2 host=linux
+	worktree = avx2-port 7750dd8bbbff42cc947bc9082b842655a3b85886 store=/home/david/stores/llama.cpp-prism-avx2 host=linux
 [software "calx-mill"]
 	url      = https://github.com/slartibardfast/calx-mill.git
 	pin      = a2e53dcfaf497c317486852016665665950f5951
 	branch   = main
-	worktree = bonsai-split a2e53dcfaf497c317486852016665665950f5951 store=/home/david/stores/calx-mill host=linux
+	worktree = bonsai-split e6bdb2a8b26ea4fad8d033df49543f02e348d588 store=/home/david/stores/calx-mill host=linux
 [software "host-lint"]
 	# The gating tool, referenced at the same pin as the tools/host-lint
 	# submodule; its store carries the build that --install-hooks deploys.

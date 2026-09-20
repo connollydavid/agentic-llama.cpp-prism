@@ -70,7 +70,15 @@ The vec_dot budget is the landed kernel's design-based 90 uops per 28-byte
 block; the repack steady state is 8. The pure-GPU prediction at the anchored
 rate is 31.82 tok/s against the 31.84 measured.
 
-PQ2_0 comparison on the same card: pending the 7.21 GB download.
+Packing comparison (both files benched on the same rig): PQ2_0 decodes
+Turing at 41.90 tok/s (268 GB/s effective, 0.44 of DRAM) against PTQ1_0's
+31.84 (180 GB/s, 0.30) and prefills 715.9 against 460.5, so the cheaper
+unpacking wins both phases per byte on this generation. The sweep still
+picks PTQ1_0 for the 4 GiB target: the 28-byte block fits 37 layers in the
+budget against PQ2_0's 31, and PTQ1_0 with the repacked path predicts
+6.55 tok/s to PQ2_0's 6.21 (both files carry the AVX2 CPU kernels of
+plan/0002). The packing verdict holds the model card's guidance: PTQ1_0
+wherever memory is tightest.
 
 ## Verification
 

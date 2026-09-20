@@ -75,3 +75,9 @@
     evidence = validate plan/ call/ ok; software --check exit 0; prose + refs --gate green this commit
     tool = host-lifecycle@0.54.2
     recorded = 2026-09-20
+
+[receipt "verify"]
+    disposition = done
+    evidence = validate plan/ call/ ok; refs --gate resolves all; reconcile clean; prose 0 flags (12 advisory numeral warnings in results tables; the entrance README bars treating exit-3-on-warning as a defect, but the manifest recheck chains on the exit code, so this receipt re-opens mechanically)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
