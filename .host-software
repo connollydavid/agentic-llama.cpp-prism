@@ -1,0 +1,29 @@
+# Software-under-test recipe. Each [software "<name>"] stanza materializes
+# locally under software/<name>/ as a bare object store .bare/ with a .git
+# gitdir-link file beside it, plus the canonical worktree at
+# software/<name>/<branch>/ and any parallel worktrees, all gitignored. The
+# pin replaces a gitlink as the reproducibility anchor.
+#
+# The two port components keep their backing stores in the WSL2 ext4
+# filesystem (call/0003): builds must not run across the 9p mount, so each
+# parallel worktree line carries store= into /home/david/stores and the
+# in-tree handle is a symlink materialized by the tool.
+[software "llama-cpp-prism"]
+	url      = https://github.com/slartibardfast/llama.cpp-prism-avx2.git
+	pin      = 9a9394a895b96003ca842a6041cb28ac49a108f7
+	branch   = master
+	worktree = avx2-port 9a9394a895b96003ca842a6041cb28ac49a108f7 store=/home/david/stores/llama.cpp-prism-avx2 host=linux
+[software "calx-mill"]
+	url      = https://github.com/slartibardfast/calx-mill.git
+	pin      = a2e53dcfaf497c317486852016665665950f5951
+	branch   = main
+	worktree = bonsai-split a2e53dcfaf497c317486852016665665950f5951 store=/home/david/stores/calx-mill host=linux
+[software "host-lint"]
+	# The gating tool, referenced at the same pin as the tools/host-lint
+	# submodule; its store carries the build that --install-hooks deploys.
+	url       = https://github.com/connollydavid/host-lint.git
+	pin       = 0eeabc20fdae1c283d0d9d284178be6488bb431d
+	worktrees =
+	hooks     = pre-commit
+	toolchain = rustup 1.95.0 (local, x86_64-unknown-linux-gnu; call/0003)
+	artifact  = target/release/host-lint 5ebd36079da20f8631bc10e49907fc43f6468195888d18657cfd8830a772235b

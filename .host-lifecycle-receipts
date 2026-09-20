@@ -1,0 +1,71 @@
+[receipt "materialize" "llama-cpp-prism"]
+    disposition = done
+    evidence = 4 item(s) realized for llama-cpp-prism at pin 9a9394a895b9 (reference)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "materialize" "calx-mill"]
+    disposition = done
+    evidence = 4 item(s) realized for calx-mill at pin a2e53dcfaf49 (reference)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "materialize" "host-lint"]
+    disposition = done
+    evidence = 2 item(s) realized for host-lint at pin 0eeabc20fdae (reference)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "classify"]
+    disposition = done
+    evidence = host-lifecycle classify . -> a (2026-09-20)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "embed" "llama-cpp-prism"]
+    disposition = done
+    evidence = software --materialize . : store + worktrees at pin; receipt written by tool
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "embed" "calx-mill"]
+    disposition = done
+    evidence = software --materialize . : store + worktrees at pin; receipt written by tool
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "embed" "host-lint"]
+    disposition = done
+    evidence = software --materialize . : store + worktrees at pin; receipt written by tool
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "remap"]
+    disposition = skip
+    reason = call/0004
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "publish"]
+    disposition = skip
+    reason = call/0004
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "release" "llama-cpp-prism"]
+    disposition = skip
+    reason = call/0004
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "release" "calx-mill"]
+    disposition = skip
+    reason = call/0004
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+
+[receipt "release" "host-lint"]
+    disposition = skip
+    reason = call/0004
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20

@@ -1,1 +1,1 @@
-The operating manual is AGENTS.md. This file is a pointer, kept so tools that look for CLAUDE.md find the manual.
+The operating manual is AGENTS.md. This file is a pointer, kept so tools that look for CLAUDE.md find the manual; the four working principles, the lem pronoun system, and the reference discipline under the heading that a number that names something resolves to it all live there.

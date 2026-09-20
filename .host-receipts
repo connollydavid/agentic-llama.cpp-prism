@@ -1,0 +1,12 @@
+[receipt "adopt"]
+    disposition = done
+    evidence = host-lifecycle adopt . --name agentic-llama-cpp-prism; stamp b917d4dc81da; scaffold commit deb7099
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-20
+applied = LEXICON-declaration-is-a-report recorded=2026-09-20 via=verify
+applied = PIN-two-surfaces-two-claims recorded=2026-09-20 via=verify
+applied = ACTIVE-corpus-and-agents-manual recorded=2026-09-20 via=verify
+applied = LEM-address-direction recorded=2026-09-20 via=verify
+applied = LEM-exemplar-section recorded=2026-09-20 via=verify
+applied = LEM-lane-and-mcp recorded=2026-09-20 via=verify
+applied = LEM-pronoun-system recorded=2026-09-20 via=verify

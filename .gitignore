@@ -18,3 +18,6 @@
 
 # The ZCode harness working directory.
 /.zcode/
+
+# The local environment fingerprint: this machine's state, never shared.
+.host-envhash
