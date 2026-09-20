@@ -21,6 +21,33 @@ bandwidth arithmetic of plan/0001 predicts.
   AVX2-class machines, with the AVX512 path unchanged where it exists.
 - Out of scope: changes to the repack framework itself or other quant types.
 
+## Results (2026-09-20)
+
+Landed on `avx2-port` ("cpu: AVX2 weight repack for PTQ1_0 (shared layout
+with PQ2_0)"). `block_ptq1_0x4` stores the decoded ternary codes as 2-bit
+slots in the `block_pq2_0x4` layout (a lossless conversion), so the repack
+pays the base-3 decode once at load and the steady-state gemv is shared by
+both types. Three integration defects were found and fixed on the real model,
+each invisible to the synthetic suites: the repack buffer was sized from the
+source type (21 percent too small), the Hadamard rotation matrices that the
+runtime places beside the weights crashed the loader (stored verbatim now,
+with generic-path approval for ops whose sources carry no repack traits),
+and the first AVX2 gemm cut ran prefill below the scalar baseline (qword
+gathers and 16-accumulator pressure), so the batched gemm stays on the
+generic path and an optimized gemm is owed work.
+
+Measured, CPU-only, 16 threads (`-ngl 0 -p 512 -n 32 -t 16`, Xeon W-2140B:
+
+| | before (scalar) | after (AVX2 + repack) |
+|---|---|---|
+| tg32 | 0.13 tok/s | 1.81 tok/s (13.9x) |
+| pp512 | 174.58 tok/s | generic gemm, number pending the rerun |
+
+The plan/0001 divergence matrix predicted a 1.33x repack gain on this CPU
+class at the model level; the measured full-pipeline gain (13.9x against the
+scalar baseline, which pays the decode every token with no SIMD at all)
+reflects how far the starting point was below the model's vec_dot class.
+
 ## Verification
 
 `test-backend-ops` green on the CPU backend for both ternary types with the

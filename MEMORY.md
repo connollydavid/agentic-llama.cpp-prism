@@ -12,3 +12,10 @@
 - Gates at adoption: validate plan/ call/ ok; software --check no hazards; refs --gate resolves everything; prose 0 flags.
 - Local rig: 2x Quadro RTX 6000 (TU102) + Xeon W-2140B (Skylake-X: AVX2 + AVX512, no VNNI). The new AVX2 kernels run natively here because the CPU lacks every VNNI class the existing ternary kernels require. Target machine: i9-10885H (Comet Lake, AVX2 only) + 4 GiB Turing (TU117 class).
 - gh holds two accounts: connollydavid (active) and slartibardfast; switch to slartibardfast for fork pushes.
+
+### 2026-09-20 — kernels and repack landed; anchors and the packing verdict
+
+- plan/0002 complete: AVX2 vec_dot for PTQ1_0 (reference-staging decode) and the plain-AVX2 branch for PQ2_0; test-quantize-fns green both types; x86 fallback alias retired.
+- plan/0003 complete except the optimized gemm (owed work, generic path ships): block_ptq1_0x4 = PQ2_0 slot layout, shared AVX2 gemv; three real-model defects fixed (repack buffer 21 percent undersized; the prism.hadamard rotation matrices crashed the loader in the repack buffer, now stored verbatim with generic-path op approval; first gemm cut regressed prefill below scalar).
+- Measured CPU-only (W-2140B, 16t): tg32 0.13 -> 1.81 tok/s (13.9x). PQ2_0 GPU anchor: tg128 41.90 tok/s (268 GB/s decode-effective) vs PTQ1_0 31.84 (180 GB/s): Turing decode is instruction-bound, PQ2_0 unpacks cheaper, yet PTQ1_0+repack still wins the 4 GiB + i9-10885H split (6.55 vs 6.21 predicted) because 28-byte blocks fit 37 layers against 31.
+- The calx-mill worktree file lost two patches once (found reverted to the last commit with a clean tree; cause unknown, re-applied and verified on disk before building). Lesson recorded: verify patch application with grep before cargo.
