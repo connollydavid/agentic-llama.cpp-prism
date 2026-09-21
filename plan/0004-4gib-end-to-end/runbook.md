@@ -52,11 +52,15 @@ VRAM per token across the sixteen full-attention layers.
 ## What to expect
 
 Measured on the anchor rig emulating the 4 GiB budget (numbers and commands
-in this milestone's README): decode between 1.0 and 1.6 tok/s depending on
-the split (fewer GPU layers decoded faster: try ngl 32 alongside 37), and
-prefill around 250 tok/s at the split. The plan/0001 sweep's 6.5 tok/s
-prediction assumed a bandwidth-bound CPU leg; measurement shows the leg is
-per-op-overhead-bound at batch 1, and closing that gap (decode-step
-profiling, then the optimized gemm) is the owed work that moves the number.
-CPU-only with the AVX2 kernels: pp512 184.96 against the 174.58 scalar
-baseline; decode 0.27 (vec_dot) to 0.41 (repack on) against 0.13 before.
+in this milestone's README): decode between 1.0 and 2.1 tok/s depending on
+split and thread count (ngl 37, repack on, physical-core threads: 2.08
+tok/s), prefill around 250 tok/s at the split. Two operational rules from
+plan/0007: use `-t <physical cores>` (t8 beat t16 by 24 percent on the mixed
+split), and the Hadamard signs fold is on by default (LLAMA_HADAMARD_FOLD_SIGNS=0
+reverts it). The plan/0001 sweep's decode ceiling for the 1650 + i9-10885H
+is 9.89 tok/s once the CPU leg's per-op overhead closes; the gap and its
+census live in plan/0007. Big-Turing cards with VRAM to spare should run
+the PQ2_0 file instead (41.9 tok/s full offload measured) — the packing is
+the Turing bifurcation. CPU-only with the AVX2 kernels: pp512 184.96
+against the 174.58 scalar baseline; decode 0.27 (vec_dot) to 0.41 (repack
+on) against 0.13 before.
