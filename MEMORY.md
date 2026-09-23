@@ -35,3 +35,17 @@ The nsys profile (full-offload decode) shows all kernels sum to 1.6 ms of the 31
 ### 2026-09-21 — the host is public
 
 The host repo now lives at https://github.com/connollydavid/agentic-llama.cpp-prism (public, default branch main; created with gh repo create --public --source . --push, master renamed to main because the methodology workflows trigger on main). Secret scan clean before the push; the harness .zcode plans file was untracked first. The fork under slartibardfast stays the software home; the host carries the thought.
+
+### 2026-09-23 — re-materialized on a new machine; two tool defects raised upstream
+
+The host was re-materialized at /home/dconnolly/agentic-llama.cpp-prism (Arch Linux, stores under software/stores/ via the mirror-adapted .host-software), partially: stores existed, but no skill links, no commit hooks, and no gating binary. Bootstrap fixed all three (link-skills.sh, `software --install-hooks .`, host-lint built in the local rust 1.95.0 worktree). The local host-lint build hash differs from the recorded canonical hash (98a9f48… vs 5ebd360…): the recorded one is the pinned container's output, the local toolchain legitimately differs, reported as provenance not a gate (call/0003's "local gating build").
+
+Two host-lifecycle@0.54.2 defects surfaced and were raised upstream:
+- #28: the setup-gate skill census double-counts a tool that is both a referenced submodule (tools/host-lint) and an embedded Where-room component (software/host-lint/main) — one symlink cannot resolve to both copies of SKILL.md, so exactly one requirement always HAZARDs. call/0006 records the disposition; the residual gap closes when the tool dedupes.
+- #29: the entry-point mode-gate reads the `./` inside a `../`-prefixed script path (workflow runs `python3 ../scripts/hip/gcn-cdna-vgpr-check.py`, never `./`), false-HAZARDing a non-executable that needs no exec bit. Local remedy applied (git update-index --chmod=+x in the master worktree) per the tool's printed instruction; durable fix belongs in the detector.
+
+Also: the Ternary-Bonsai-2-27B-PTQ1_0.gguf is NOT on this machine yet (only Qwen3.6-27B in /home/dconnolly/models); re-download before any plan/0001-anchor-local or llama-bench run.
+
+### 2026-09-23 — docs made host-agnostic; prose zeroed; every gate green except the recorded tool defects
+
+The Project-specifics "Execution environment" section in AGENTS.md now states the class of fact rather than this copy's particulars: stores materialize from `.host-software` wherever the operator directs, build in the worktrees, keep stores on fast local storage, never hardcode a machine's store path into the tree. The model-file line names "the local models directory of whatever host does the benchmarking" instead of `/home/david/models/`. README's "Everything runs from WSL2" became the host-agnostic materialize statement. All 14 prose-trope warnings were reworded to zero (AGENTS.md Project-specifics decorations, call/0001's two dashes, plan/0001-0004/0007 tropes); `host-lifecycle prose .` exits 0. `validate plan/ call/` ok, `reconcile` clean, `refs --gate` green, `software --check` exit 0. The two open items are the tool defects #28 (skill census double-count) and #29 (mode-gate `../` over-fire), both raised upstream; neither is a project defect.
