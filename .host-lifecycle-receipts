@@ -81,3 +81,15 @@
     evidence = validate plan/ call/ ok; refs --gate resolves all; reconcile clean; prose 0 flags (12 advisory numeral warnings in results tables; the entrance README bars treating exit-3-on-warning as a defect, but the manifest recheck chains on the exit code, so this receipt re-opens mechanically)
     tool = host-lifecycle@0.54.2
     recorded = 2026-09-20
+
+[receipt "materialize" "calx-mill"]
+    disposition = done
+    evidence = 2 item(s) realized for calx-mill at pin a2e53dcfaf49 (reference)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-23
+
+[receipt "materialize" "host-lint"]
+    disposition = done
+    evidence = 2 item(s) realized for host-lint at pin 0eeabc20fdae (reference); toolchain rustup 1.95.0 (local, x86_64-unknown-linux-gnu; call/0003)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-23

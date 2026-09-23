@@ -19,6 +19,12 @@
 # The ZCode harness working directory.
 /.zcode/
 
+# The OpenCode harness working directory.
+/.opencode/
+
 # The local environment fingerprint: this machine's state, never shared.
 .host-envhash
 /refs/agner/*.txt
+
+# The local environment fingerprint: this machine's state, never shared.
+/.claude/skills/*

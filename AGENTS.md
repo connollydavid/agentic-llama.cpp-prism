@@ -1064,26 +1064,29 @@ the x86 SIMD ladder of the CPU backend, so Ternary-Bonsai-2-27B runs on a
 4 GiB Turing CUDA GPU paired with an AVX2 host CPU. The split between GPU and
 CPU is chosen by measurement-backed modeling in calx-mill, not by guesswork.
 
-**Execution environment.** Every command in this repository runs from WSL2
-(Ubuntu-22.04), even though the repository root sits on the Windows filesystem
-at `/mnt/c/Users/david/Development/agentic-llama.cpp-prism`. The software
-object stores and worktrees live in the Linux filesystem under
-`/home/david/stores/`, materialized by `host-lifecycle software --materialize .`
-through `store=` lines in `.host-software`. Build inside the worktrees, never on
-the `/mnt/c` side: the 9p mount is too slow for CUDA and Rust builds.
+**Execution environment.** The repository makes no assumption about the host
+that checks it out. The software object stores and worktrees are materialized
+the same way on any machine: `host-lifecycle software --materialize .` reads
+the recipe in `.host-software` (URL, pinned SHA, worktree set) and realises
+each store wherever the operator directs, the in-tree `software/<name>/`
+handles pointing at the materialized trees. The one rule is mechanical, not a
+path: build inside the worktrees, and keep the stores on a local or otherwise
+fast filesystem (a network or a shares mount is too slow for CUDA and Rust
+builds). Materialize, check, and re-point with the tool; never hardcode a
+machine's store location into the tree.
 
 **Software components** (the Where room, one stanza each in `.host-software`):
 
-- `llama-cpp-prism` — the fork `slartibardfast/llama.cpp-prism-avx2` of
+- `llama-cpp-prism`, the fork `slartibardfast/llama.cpp-prism-avx2` of
   `PrismML-Eng/llama.cpp`. Port work happens on the `avx2-port` worktree. Build:
   `cmake -B build -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=75` with
-  `PATH=$HOME/.local/bin:$PATH` (nvcc link). Tests: `ctest --test-dir build` —
+  `PATH=$HOME/.local/bin:$PATH` (nvcc link). Tests run with `ctest --test-dir build`;
   the ternary types are covered by `test-quantize-fns`, `test-backend-ops`,
   `test-ptq1_0-element-map`, and `test-ptq1_0-cuda-dot`.
-- `calx-mill` — the throughput model `slartibardfast/calx-mill`. The
+- `calx-mill`, the throughput model `slartibardfast/calx-mill`. The
   `bonsai-split` worktree carries `examples/bonsai-split.rs`, the layer-split
   sweep for this project. Build and test: `cargo build --release` /
-  `cargo test`. Never hand-edit its proven `Substrate` axes; add substrates as
+  `cargo test`. Keep its proven `Substrate` axes as shipped; add substrates as
   new data functions with Agner Fog citations.
 
 **Target hardware classes** (modeling substrates, see plan/0001):
@@ -1096,7 +1099,8 @@ the `/mnt/c` side: the 9p mount is too slow for CUDA and Rust builds.
   per row in the substrate data) are the canonical source for pipe rates.
 
 **Model file.** `Ternary-Bonsai-2-27B-PTQ1_0.gguf` (5.95 GB) is downloaded to
-`/home/david/models/` (gitignored, outside the repo); it is never committed.
+a gitignored path outside the repository (the local models directory of
+whatever host does the benchmarking); it is never committed.
 
 **Conventions.** Commits inside the software worktrees follow each component's
 own style (llama.cpp: short imperative subjects; calx-mill: prose subjects with

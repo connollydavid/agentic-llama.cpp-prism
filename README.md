@@ -18,5 +18,6 @@ This repository is the *thought*: plans, decisions, personas, and the modeling
 record. The *action* lives in the embedded software worktrees under
 `software/`, materialized from `.host-software`. Read `AGENTS.md` for the
 operating manual, `plan/PLAN.md` for the milestone index, and `call/` for the
-decisions. Everything runs from WSL2; see the project-specifics section of
-`AGENTS.md`.
+decisions. Execution is host-agnostic: stores and worktrees are materialized by
+`host-lifecycle software --materialize`, wherever the operator directs them (see
+the project-specifics section of `AGENTS.md`).
