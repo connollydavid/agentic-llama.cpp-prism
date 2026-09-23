@@ -6,7 +6,7 @@ Ternary-Bonsai-2-27B in PTQ1_0 needs 5.95 GB of weights read per generated
 token. A 4 GiB card cannot hold them, so the model must split across the GPU
 and the host CPU, and the host leg runs on CPUs (i9-10885H primary; i7-2600K
 and i7-4670K stretch; Zen 1-4 as divergence classes) whose SIMD support stops
-anywhere from AVX to AVX-512. Where the layers go, and which kernel family
+at one class on the AVX to AVX-512 ladder. Where the layers go, and which kernel family
 matters on which CPU, is a bandwidth-and-issue arithmetic question: exactly
 what calx-mill projects. Deciding it by measurement-backed modeling instead
 of intuition is the point of this host.
@@ -35,7 +35,8 @@ of intuition is the point of this host.
 Model facts from the shipped GGUF tensor table (header parsed 2026-09-20):
 arch qwen35, 64 blocks, d_model 5120, FFN 17408, full attention every 4th
 layer (16 full-attn at 81.47 MB, 48 linear at 84.91 MB), output head 278.1 MB
-streamed per token, embedding read one row per token; 5.936 GB total.
+read per token at stream time, and the embedding reads one row per token;
+5.936 GB total.
 
 Anchor (local rig, stock pin build, `./build/bin/llama-bench -m
 /home/david/models/Ternary-Bonsai-2-27B-PTQ1_0.gguf -ngl 99 -p 512 -n 128
@@ -110,8 +111,8 @@ manuals are CC BY-NC-ND: reference and cite, never vendor wholesale.
 One data function per CPU in the calx-mill substrate set, following the
 shipped `avx512_core()` shape, plus the device-level constants (SM count,
 effective DRAM bytes/ns from STREAM-class measurement or datasheet) as named
-constants beside them. No changes to the core, the proofs, or the shipped
-substrates.
+constants beside them. The core, the proofs, and the shipped substrates stay
+as they are.
 
 - verify: `cargo test` green in the worktree; each substrate's axes trace to
   an Agner Fog extract row or a cited datasheet number

@@ -7,7 +7,7 @@ Batch-1 decode on the CPU backend goes through the repack path (interleaved
 plain vec_dot. Today PQ2_0 has a repack layout with kernels only under
 AVX512-VNNI, and PTQ1_0 has no repack at all. Without an AVX2 repack, the
 CPU leg of the 4 GiB split runs the plan/0002 vec_dot without the
-layout the fast decode path expects, leaving the CPU leg slower than the
+layout the fast decode path expects, and the leg lands slower than the
 bandwidth arithmetic of plan/0001 predicts.
 
 ## Scope

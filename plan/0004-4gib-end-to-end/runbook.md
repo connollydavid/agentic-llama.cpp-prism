@@ -60,7 +60,7 @@ split), and the Hadamard signs fold is on by default (LLAMA_HADAMARD_FOLD_SIGNS=
 reverts it). The plan/0001 sweep's decode ceiling for the 1650 + i9-10885H
 is 9.89 tok/s once the CPU leg's per-op overhead closes; the gap and its
 census live in plan/0007. Big-Turing cards with VRAM to spare should run
-the PQ2_0 file instead (41.9 tok/s full offload measured) — the packing is
-the Turing bifurcation. CPU-only with the AVX2 kernels: pp512 184.96
+the PQ2_0 file instead (41.9 tok/s full offload measured), the packing
+verdict the Turing bifurcation. CPU-only with the AVX2 kernels: pp512 184.96
 against the 174.58 scalar baseline; decode 0.27 (vec_dot) to 0.41 (repack
 on) against 0.13 before.

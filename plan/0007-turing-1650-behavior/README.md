@@ -9,7 +9,7 @@ Turing anchor (RTX 6000, 72 SMs) says PTQ1_0 batch-1 decode runs about
 leg projects to roughly 35 GB/s effective against its own 128 GB/s: the
 decode kernel, not memory, is the wall. Raising per-SM decode to about
 9.1 GB/s (128/14) would saturate the card's bandwidth; the RTX 6000 shares
-the sm_75 kernel paths and serves as the proxy bench.
+the sm_75 kernel paths and stands in as the proxy bench.
 
 ## Scope
 

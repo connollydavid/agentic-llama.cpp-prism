@@ -18,7 +18,7 @@ Intel side, Zen 1 through Zen 3 on the AMD side.
   accumulation (no dpbusd without VNNI), per-block Q8 sum subtraction, FP16
   group scale.
 - A plain-AVX2 branch for `ggml_vec_dot_pq2_0_q8_0` beside the existing VNNI
-  path, mirroring the upstream Q2_0 idiom.
+  path, where the upstream Q2_0 idiom is mirrored.
 - Remove the x86 `arch-fallback.h` aliases for the ternary vec_dots; declare
   the new symbols in `quants.h`.
 - Extend the element-map test to cover the AVX2 decode order against the CPU

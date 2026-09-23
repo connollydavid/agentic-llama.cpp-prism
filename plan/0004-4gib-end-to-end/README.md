@@ -20,7 +20,8 @@ delivers against what the model predicted.
 - A Bonsai-demo-style README in this host recording the tested invocation
   for the real 4 GiB machine (the on-target run itself happens when the
   target hardware is at hand).
-- Out of scope: kernel changes (landed by 0002/0003), moving the fork pin.
+- Out of scope: kernel changes (landed by 0002/0003) and any move of the
+  fork pin.
 
 ## Results (2026-09-20, anchor rig emulating the 4 GiB budget)
 
