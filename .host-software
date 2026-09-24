@@ -4,20 +4,20 @@
 # software/<name>/<branch>/ and any parallel worktrees, all gitignored. The
 # pin replaces a gitlink as the reproducibility anchor.
 #
-# The two port components keep their backing stores in the WSL2 ext4
-# filesystem (call/0003): builds must not run across the 9p mount, so each
-# parallel worktree line carries store= into /home/david/stores and the
-# in-tree handle is a symlink materialized by the tool.
+# Parallel worktree lines (worktree = <branch> <pin>) materialize in-tree under
+# software/<name>/<branch>/; a store=<path> [host=<os>] override exists only
+# for a backing store that must live off-tree (a separate filesystem or
+# platform), and is never a machine-specific absolute path.
 [software "llama-cpp-prism"]
 	url      = https://github.com/slartibardfast/llama.cpp-prism-avx2.git
 	pin      = 9a9394a895b96003ca842a6041cb28ac49a108f7
 	branch   = master
-	worktree = avx2-port cd9012a9d30122bdaeff53768dee10f3e10c3e85 store=/home/dconnolly/agentic-llama.cpp-prism/software/stores/llama.cpp-prism-avx2 host=linux
+	worktree = avx2-port cd9012a9d30122bdaeff53768dee10f3e10c3e85
 [software "calx-mill"]
 	url      = https://github.com/slartibardfast/calx-mill.git
 	pin      = a2e53dcfaf497c317486852016665665950f5951
 	branch   = main
-	worktree = bonsai-split e6bdb2a8b26ea4fad8d033df49543f02e348d588 store=/home/dconnolly/agentic-llama.cpp-prism/software/stores/calx-mill host=linux
+	worktree = bonsai-split e6bdb2a8b26ea4fad8d033df49543f02e348d588
 	# MIRROR NOTE (this copy): upstream recorded bonsai-split @ 15ab018a, but
 	# that SHA is not on the remote or its origin (fetch shows only the
 	# published branch tip e6bdb2a8) — it was a local-only WSL2 commit never
@@ -27,9 +27,12 @@
 [software "host-lint"]
 	# The gating tool, referenced at the same pin as the tools/host-lint
 	# submodule; its store carries the build that --install-hooks deploys.
-	url       = https://github.com/connollydavid/host-lint.git
-	pin       = 0eeabc20fdae1c283d0d9d284178be6488bb431d
-	worktrees =
-	hooks     = pre-commit
-	toolchain = rustup 1.95.0 (local, x86_64-unknown-linux-gnu; call/0003)
-	artifact  = target/release/host-lint 5ebd36079da20f8631bc10e49907fc43f6468195888d18657cfd8830a772235b
+	# The artifact is a local gating build (call/0003); its reproducible build
+	# is attested by host-lint's own pinned release CI, so this host's container
+	# lane is waived (call/0007).
+	url          = https://github.com/connollydavid/host-lint.git
+	pin          = 0eeabc20fdae1c283d0d9d284178be6488bb431d
+	worktrees    =
+	hooks        = pre-commit
+	repro-waiver = call/0007
+	artifact     = target/release/host-lint 5ebd36079da20f8631bc10e49907fc43f6468195888d18657cfd8830a772235b
