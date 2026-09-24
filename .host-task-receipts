@@ -4,3 +4,30 @@
     evidence = plan/0008 Results section, the layered tally table with the sampling commands (commit eb3bf45)
     tool = host-lifecycle@0.54.2
     recorded = 2026-09-24
+
+[receipt "plan/0008#fix-what-the-profile-names"]
+    disposition = done
+    verify = the chosen fix lands with its own before/after numbers here
+    evidence = plan/0008 second-session Results: split-mode failures recorded, single-card 28.95, and the op-offload fix 3.29 to 4.07 tok/s at ngl 37
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
+
+[receipt "plan/0008#mixed-split-cpu-leg"]
+    disposition = done
+    verify = mixed tg at ngl 37 exceeds 4 tok/s on the anchor rig or the
+    evidence = plan/0008 second-session Results: 4.07 tok/s at ngl 37 t16 nopo, exceeds the 4 tok/s clause
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
+
+[receipt "plan/0008#re-baseline-the-model"]
+    disposition = done
+    verify = the sweep table for both packings lands here with the
+    evidence = calx-mill 7047191 (re-pinned): the corrected sweep table in plan/0008 second-session Results
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
+
+[receipt "plan/0008#elide-identity-reshapes"]
+    disposition = skip
+    reason = call/0008
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24

@@ -1,5 +1,8 @@
 # plan/0008, eliminating the decode host cost fully
 
+Status: closed 2026-09-24 on the attribution branch of the Verification
+clause; the GPU-leg work the attribution names continues in plan/0010.
+
 ## Why
 
 The evidence chain through plan/0007: full-offload decode spends about
@@ -186,3 +189,50 @@ codegen.
 The milestone decision this leaves with the operator: close on the
 attribution branch and re-cut the GPU-leg work as a new milestone, or
 re-scope this one. The measured record here supports either.
+
+### Second session (2026-09-24): the remaining tasks land and the milestone closes
+
+elide-identity-reshapes, falsified (call/0008): the decode graph is 4,382
+nodes with 1,188 reshape and 738 view nodes on both sides of the change
+(census via gdb breaking at `ggml_backend_sched_alloc_graph` and dumping
+with `ggml_graph_dump_dot`, a method that counts the view-class nodes the
+scheduler debug dump skips, which is why plan/0007's census read lower).
+The identity case never fires: this model's hadamard sites, in the unified
+KV path, always reshape 5120-wide activations into 1024-wide blocks.
+Perplexity parity held (4.9591 plus or minus 0.27100 on both sides). The
+elision is reverted; the skip receipt cites call/0008.
+
+fix-what-the-profile-names: the profile named the sequential device pair.
+The fork's parallel split modes fail at model load for these types
+(`-sm row`, `-sm tensor`, both recorded), and a single visible card runs
+28.95 against the pair's 28.26: the handoffs cost more than halved streams
+gain. On the mixed split the chosen fix is configuration: op-offload off
+(`-nopo 1`), which stops the CPU/CUDA oscillation the telemetry counted
+(about 175 splits per compute): mixed ngl 37 goes 3.29 to 3.90 tok/s at t8
+and 4.07 at t16, and the plan/0007 t8-beats-t16 rule flips with the
+oscillation gone. The flag is the interface; no fork-side default change
+is justified while other model classes depend on op-offload.
+
+mixed-split-cpu-leg: 4.07 tok/s at ngl 37 (t16, op-offload off, repack on)
+exceeds the 4 tok/s clause on the anchor rig.
+
+re-baseline-the-model: calx-mill carries the measured CPU-leg overhead as
+6.39 ms per CPU-side layer (bonsai-split commit 7047191, re-pinned in
+`.host-software`), calibrated at the measured 4.07 point. The corrected
+sweep:
+
+```
+primary target, 4 GiB Turing + i9-10885H:
+  PTQ1_0 vec_dot   best ngl 37   2.78 tok/s
+  PTQ1_0 repacked  best ngl 37   3.07 tok/s   (the naive model promised 6.55)
+  PQ2_0            best ngl 31   2.69 tok/s   (both kernels)
+calibration check, anchor rig, PTQ1_0 repacked ngl 37: 4.07 tok/s (measured 4.07)
+anchor rig pure-GPU ends: PTQ1_0 31.82 (anchor 31.84), PQ2_0 39.01 (41.90)
+```
+
+Closure: the Verification clause's second branch is met. Full-offload
+decode is attributed with numbers (about 95 percent GPU-work-bound across
+the sequential pair; the total host ceiling is about 30 tok/s against the
+60 tok/s first branch), the mixed gate is exceeded, and the GPU-leg work
+the attribution names, plus the rig-scale levers (device overlap, batched
+serving, speculative drafting), moves to plan/0010.

@@ -1,5 +1,9 @@
 # plan/0009, Bonsai-4B fast decode, the CUDA path first
 
+Status: side quest for the 1650, parked at the 2026-09-24 session's close.
+The primary program moves to the rig (plan/0010); this milestone resumes
+when the 1650 hardware is at hand, from the operating point locked below.
+
 ## Why
 
 plan/0008's corrected model settles the interactive question for the 27B
@@ -163,3 +167,27 @@ the matmul kernel (-0.49 ms and 218 nodes), fuse the norm family (-0.4 ms
 and 145 nodes); the ladder ends near 3.3 ms per token, about 300 tok/s
 anchor, which projects to 70 to 100 tok/s on the 1650 under plan/0007's
 concentration model. The real number comes from the card when at hand.
+
+### The locked operating point: 32k context at q8_0 KV (2026-09-24)
+
+The operator's decision: the 1650 deployment runs context 32768 with
+`-ctk q8_0 -ctv q8_0`. The KV densities for this model (36 layers, 8 GQA
+heads, 128 head dim, K plus V; an earlier session table mis-stated q8_0 at
+q4_0's density, corrected here): f16 144.0 KiB per token, q8_0 76.5,
+q5_1 54.0, q5_0 49.5, q4_1 45.0, q4_0 and IQ4_NL 40.5. At 32k the q8_0
+cache is 2.41 GiB against a 2.6 GiB budget (weights 1019.5 MiB, CUDA
+context about 248, compute about 150): it fits with about 270 MiB spare
+and no display reserve. The measured speed consequence is strict: batch-1
+decode reads the whole cache every token, so at full 32k fill the card's
+128 GB/s caps the pairing at about 37 tok/s (KV 18.8 ms plus weights
+8.0 ms), and at half fill about 57. The fork's KV menu is fixed at
+f32, f16, bf16, q8_0, q4_0, q4_1, IQ4_NL, q5_0, q5_1 (common/arg.cpp:304);
+q4-class mixes buy 47 to 56 tok/s ceilings at 32k if the q8_0 quality gate
+ever needs the speed, at a quality cost the perplexity clause must gate.
+
+Not yet measured (the bench was cancelled when the program switched):
+the anchor run of the locked point, `-p 32640 -n 128 -ctk q8_0 -ctv q8_0`
+at half and full fill, is the first action on resume, alongside the
+flash-attention dequant-path check for the smaller KV types. The kernel
+ladder above is unchanged by the operating point; at 32k the KV stream
+joins the weights as the second bandwidth line item.
