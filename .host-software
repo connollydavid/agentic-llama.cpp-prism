@@ -12,7 +12,7 @@
 	url      = https://github.com/slartibardfast/llama.cpp-prism-avx2.git
 	pin      = 9a9394a895b96003ca842a6041cb28ac49a108f7
 	branch   = master
-	worktree = avx2-port 2379e0d7126e1ab28f73737038211fbe1d526030 store=/home/dconnolly/agentic-llama.cpp-prism/software/stores/llama.cpp-prism-avx2 host=linux
+	worktree = avx2-port cd9012a9d30122bdaeff53768dee10f3e10c3e85 store=/home/dconnolly/agentic-llama.cpp-prism/software/stores/llama.cpp-prism-avx2 host=linux
 [software "calx-mill"]
 	url      = https://github.com/slartibardfast/calx-mill.git
 	pin      = a2e53dcfaf497c317486852016665665950f5951
@@ -22,8 +22,8 @@
 	# that SHA is not on the remote or its origin (fetch shows only the
 	# published branch tip e6bdb2a8) — it was a local-only WSL2 commit never
 	# pushed. This mirror pins the published tip. Reconcile once upstream
-	# publishes. Same for the llama-cpp-prism avx2-port @ 2379e0d7 pin, which
-	# IS on the remote and materialized clean.
+	# publishes. The llama-cpp-prism avx2-port @ cd9012a9 pin IS on the remote
+	# and materialized clean.
 [software "host-lint"]
 	# The gating tool, referenced at the same pin as the tools/host-lint
 	# submodule; its store carries the build that --install-hooks deploys.
