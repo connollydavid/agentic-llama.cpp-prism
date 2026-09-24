@@ -53,8 +53,9 @@ moonlight as the 27B's draft head in a later milestone.
 ### baseline-4b {#baseline-4b}
 
 As-is fork benches on the anchor rig: full offload on one GPU (the sm_75
-proxy for the 1650), CPU-only AVX2 (the no-dGPU data point and the plan/0002
-PQ2_0 branch's second model), pp512 and tg128, repack on.
+proxy for the 1650), pp512 and tg128. The models are considered separately:
+the 4B is a full-offload GPU program with no mixed split and no CPU leg, so
+no CPU-only point is taken here.
 
 - verify: the table lands here with command lines, beside the sweep's
   prediction for the same points
@@ -88,3 +89,39 @@ against the measured anchor rate.
 
 - verify: the sweep table lands here with the corrected 1650 expectation
 - depends: #mega-kernel-prototype
+
+## Results (2026-09-24, anchor rig)
+
+### fetch-and-hash
+
+`Ternary-Bonsai-4B-PQ2_0.gguf`: 1,074,969,344 bytes, sha256
+`829abec7eb92f5bf464762be7c9e8a45d777c714543a1474fc90cee20e698beb`
+(self-recorded anchor; the HF tree API publishes no per-file sha256, the
+plan/0001 precedent).
+
+Vocab comparison, both headers parsed field by field: the 4B carries the
+Qwen3 tokenizer (151,669 tokens, ChatML specials at 151643); the 27B carries
+a 248,320-token Qwen3.8-generation vocab. No match, so the 4B cannot draft
+for the 27B: the dual-use question closes negative, and any draft milestone
+belongs to the 27B's own line (the purpose-built DFlash2 head stays its only
+path). The models are separate programs from here.
+
+Shape constants for project-1650: qwen3 arch, 36 layers, d_model 2560, ffn
+9728, 32 query and 8 KV heads at 128, context 32768 (yarn over 8192, factor
+4, rope base 5e6), 1.0195 GB of weights on card.
+
+### baseline-4b
+
+Full offload on one RTX 6000 (`CUDA_VISIBLE_DEVICES=0`, `-ngl 99 -p 512 -n
+128`, build-release at the pin's content):
+
+| run | result |
+|---|---|
+| pp512 | 4669.06 |
+| tg128 | 194.07 ± 0.42 |
+
+Decode streams 1.0195 GB per token at 194 GB/s decode-effective, 72 percent
+of the 27B's PQ2_0 rate on the same card (268 GB/s). The gap is the
+per-token dispatch floor across 36 layers of smaller matmuls, exactly the
+mega kernel's target: at the 27B's rate the same card would run about 263
+tok/s, and the bandwidth floor sits at 1.0195 GB over 609 GB/s, about 590.
