@@ -125,3 +125,41 @@ of the 27B's PQ2_0 rate on the same card (268 GB/s). The gap is the
 per-token dispatch floor across 36 layers of smaller matmuls, exactly the
 mega kernel's target: at the 27B's rate the same card would run about 263
 tok/s, and the bandwidth floor sits at 1.0195 GB over 609 GB/s, about 590.
+
+### attribute-4b-token (2026-09-24, the plan/0008 method, shortened)
+
+nsys with node-level graph tracing, one RTX 6000, context 8192, traced
+decode at 144 tok/s (6.94 ms per token; the node tracer's overhead is
+host-side):
+
+| layer | per token | share |
+|---|---|---|
+| GPU kernel execution | 6.11 ms (693 kernels per token, 87 percent GPU busy) | 88 percent |
+| cudaGraphLaunch submission, GPU idle | 0.92 ms (median 914 us across 8,137 launches) | 13 percent |
+| matmul kernels (mul_mat_vec_q, three variants, 217 per token) | 3.43 ms | 49 percent |
+| flash attention family at 8k fill | 1.49 ms | 21 percent |
+| activation quantization (quantize_q8_1, 218 launches) | 0.49 ms | 7 percent |
+| the norm family (rms_norm and fused rope variants, 145 launches) | 0.68 ms | 10 percent |
+
+Flag A/Bs at the 8k operating point (`-p 8064 -n 128`): the as-is defaults
+are already optimal. `tg128 193.80` as-is, `193.54` with `-nopo 1` (null at
+full offload, as expected: no CPU layers), `173.90` with `-fa off` (flash
+attention on by default is worth 20 tok/s). No configuration lever remains;
+everything past 194 is kernel work.
+
+### The 70 tok/s gate on the 1650
+
+The intermediate goal (agreed 2026-09-24): bank the 70 tok/s band on the
+1650 before the full mega kernel. Expressing it in anchor-rig units, since
+both cards are sm_75: 70 tok/s on 14 SMs is 5.1 GB/s per SM; clock-matched
+to the 6000 that is an anchor aggregate of about 400 GB/s, and the measured
+concentration behavior from plan/0007 (the same warp count on fewer SMs
+runs each SM faster) softens that to the prerequisite the sweep can check:
+**anchor tg128 at 8k context at or above 280 tok/s, the 27B's PQ2_0
+efficiency class (3.9 GB/s per SM) on the same card.** The census ladder to
+it, each step independent and measurable: kill the per-token graph launch
+(-0.92 ms, persistent or fused decode), fuse activation quantization into
+the matmul kernel (-0.49 ms and 218 nodes), fuse the norm family (-0.4 ms
+and 145 nodes); the ladder ends near 3.3 ms per token, about 300 tok/s
+anchor, which projects to 70 to 100 tok/s on the 1650 under plan/0007's
+concentration model. The real number comes from the card when at hand.
