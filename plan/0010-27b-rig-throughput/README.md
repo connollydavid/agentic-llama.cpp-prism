@@ -1,5 +1,9 @@
 # plan/0010, the 27B at rig scale, dual Turing throughput
 
+Status: closed 2026-09-25, every task landed or refused with numbers; the
+standing levers for the next milestone are named in the close section
+below.
+
 ## Why
 
 The primary system is the rig: two RTX 6000 cards, 24 GiB each, both
