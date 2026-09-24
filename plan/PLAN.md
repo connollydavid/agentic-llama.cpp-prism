@@ -7,4 +7,5 @@
 - [0006 AVX-only kernels, stretch](0006-avx-only-kernels/README.md)
 - [0007 Turing behavior, GTX 1650 limits](0007-turing-1650-behavior/README.md)
 - [0008 decode host-cost elimination](0008-decode-host-cost-elimination/README.md)
-- [0009 Bonsai-4B fast decode, CUDA first](0009-bonsai-4b-cuda-decode/README.md)
+- [0009 Bonsai-4B fast decode, CUDA first](0009-bonsai-4b-cuda-decode/README.md) (side quest, parked)
+- [0010 the 27B at rig scale](0010-27b-rig-throughput/README.md)

@@ -93,3 +93,9 @@
     evidence = 2 item(s) realized for host-lint at pin 0eeabc20fdae (reference); toolchain rustup 1.95.0 (local, x86_64-unknown-linux-gnu; call/0003)
     tool = host-lifecycle@0.54.2
     recorded = 2026-09-23
+
+[receipt "verify"]
+    disposition = done
+    evidence = validate plan/ call/ ok; software --check no hazards after the prose fix; refs --gate green; prose 0 flags; all plan/0008 tasks receipted (3 done, 1 skip citing call/0008)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
