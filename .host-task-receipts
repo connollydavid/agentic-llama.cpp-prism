@@ -1,0 +1,6 @@
+[receipt "plan/0008#host-sample-profile"]
+    disposition = done
+    verify = the tally table lands in this README with the sampling commands
+    evidence = plan/0008 Results section, the layered tally table with the sampling commands (commit eb3bf45)
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
