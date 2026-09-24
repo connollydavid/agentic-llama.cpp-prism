@@ -19,7 +19,7 @@ its store carries the binary that `--install-hooks` deploys (call/0003). It is
 the same repository pinned as the `tools/host-lint` submodule; its true build
 and release are the tool's own upstream CI, not this project's. Its local
 toolchain here is recorded as `rustup 1.95.0 (local, x86_64-unknown-linux-gnu;
-call/0003)` — a machine-local build, not a digest-pinned container image.
+call/0003)`, a machine-local build, not a digest-pinned container image.
 
 ## Decision
 
