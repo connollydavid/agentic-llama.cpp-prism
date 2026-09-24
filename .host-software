@@ -17,7 +17,7 @@
 	url      = https://github.com/slartibardfast/calx-mill.git
 	pin      = a2e53dcfaf497c317486852016665665950f5951
 	branch   = main
-	worktree = bonsai-split e6bdb2a8b26ea4fad8d033df49543f02e348d588
+	worktree = bonsai-split 704719163131c3aaf6d079865b2fdb0b43c0b98f
 	# MIRROR NOTE (this copy): upstream recorded bonsai-split @ 15ab018a, but
 	# that SHA is not on the remote or its origin (fetch shows only the
 	# published branch tip e6bdb2a8) — it was a local-only WSL2 commit never
