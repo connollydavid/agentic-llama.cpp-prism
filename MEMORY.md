@@ -53,3 +53,13 @@ The Project-specifics "Execution environment" section in AGENTS.md now states th
 ### 2026-09-23 — the ternary model re-downloaded to a writable Linux home in this host
 
 `/home/dconnolly/models` used to be a symlink into the read-only NTFS mount `/mnt/dev/models`, so this machine had no writable `~/models` at all (touch probe failed). Replaced it with a real ext4 directory and downloaded the model fresh from Hugging Face with `hf download prism-ml/Ternary-Bonsai-2-27B-gguf Ternary-Bonsai-2-27B-PTQ1_0.gguf --local-dir /home/dconnolly/models` (repo public, ungated, apache-2.0). Verified: size 5,946,648,928 bytes (matches the HF tree API), GGUF v3 with the plan/0001 facts (qwen35, 64 blocks, d_model 5120, 851 tensors), sha256 `53107f530aa52eb00912263ab1ee29bd199261c87cd7b4ad4ca1318c1fe33ee3` (self-recorded anchor; HF publishes no per-file sha256 in the model API). The older WSL-working note in plan/0001/0002 citing `/home/david/models` is history and stays as recorded. Anchor-local bench runs now point at `/home/dconnolly/models/Ternary-Bonsai-2-27B-PTQ1_0.gguf`.
+
+### 2026-09-23 — the fold commit cd9012a9 fixed a fresh-clone build break; plan/0008 begun
+
+Rebuilding the fork fresh on this machine exposed that the sign-fold commit `2379e0d` used `ggml_mul_mat_hadamard_{set,get}_signs` in `llama-impl.h`, `ops.cpp`, and `ggml-cuda.cu` but declared neither in any header — a "builds on my machine" break (the WSL head had uncommitted header state). Fixed in `avx2-port` @ `cd9012a9` ("ggml: declare the hadamard sign-vector hint accessors in ggml.h"), two `GGML_API` lines beside `ggml_mul_mat_set_hint`.
+
+With that, the three builds for plan/0008 all succeed here: Release, RelWithDebInfo (dwarf call-graphs for the layered profiling), and a full-IPO LTO variant. CUDA suites green (test-quantize-fns, test-ptq1_0-element-map 0 mismatches, test-ptq1_0-cuda-dot exact 20000, test-backend-ops 18557 OK). calx-mill `cargo build --release` green.
+
+GPU contention on this host: another project's llama-server (yarn-agentic, PID 854, `:8080`) was holding both RTX 6000s at ~23.5 GiB each; L stopped it (owner-approved), benches will free/restart it with the identical command.
+
+Ops notes: several of L's earlier `rg` invocations used `-r` (replace) by accident, corrupting outputs; re-ran plain when results looked odd. Fork builds must run `cmake -B build-<preset> -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=75` with `/opt/cuda/bin` on PATH (this host's nvcc); the recorded AGENTS WSL command needed a PATH adaptation, called out in the plan-migration pass.
