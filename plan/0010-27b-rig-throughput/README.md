@@ -75,3 +75,84 @@ The plan/0009 census ladder at 27B scale: kill the per-token graph launch
 - verify: per-change before and after tg128 with command lines; suites
   green; perplexity parity
 - depends: none
+
+## Results (2026-09-24, the production shape and the split-buffer gap)
+
+**The production config this rig already serves** (llama-server.service, the
+neighbor deployment): `Qwen3.8-27B-W4A16-AR16.gguf` (a 4-bit AutoRound
+file, not the ternary), `-sm tensor -fa on -ctk f16 -ctv f16 --ctx-size
+262144 --parallel 1 --kv-unified --cache-ram 65536 --spec-type none
+--jinja --no-mmap`. Three consequences for this milestone:
+
+- The serving shape to beat is 262144 f16 KV sessions; the
+  batch-the-server sweep runs at that total KV budget, slots trading
+  context depth (each slot of N costs 262144/N of the 16.8 GiB the full
+  f16 cache occupies across the pair).
+- Tensor split demonstrably works on this hardware and driver: the
+  neighbor build, upstream llama.cpp at db231ec0d, runs `-sm tensor`
+  daily.
+- Production runs speculation off (`--spec-type none`), so the draft
+  lever is greenfield against this rig's own serving.
+
+**The split-buffer gap localized.** The fork's CUDA backend has no
+split-buffer implementation at all (the model-side check at
+src/llama-model.cpp:1097 throws "does not support split buffers" because
+the device's split buffer type yields nothing), and the fork's base
+(prism-b10709) predates the upstream CUDA split-buffer work that
+db231ec0d carries. The fix for overlap-the-pair is a bounded backport of
+the upstream implementation into the fork; then the parallel split modes
+load for the ternary types and the pair computes simultaneously (the
+matmul halves are independent), against the measured sequential pair at
+28.26 and the single card at 28.95.
+
+**Pipeline parallelism was already on.** It auto-enables at full offload
+with layer split (llama-context.cpp:533), so the 28.26 measurement
+already had it. The plan/0008 nsys timeline's strictly alternating device
+busy explains why it cannot help a layer split: each layer depends on the
+previous one, so only the boundary copies overlap. True device overlap
+requires the parallel split modes, that is, the backport above.
+
+### The first measured round (2026-09-24, PQ2_0 on the pair)
+
+Files: `Ternary-Bonsai-2-27B-PQ2_0.gguf` 7,206,168,928 bytes, sha256
+`3907dc1658db1f78…`; `Bonsai-2-27B-DFlash2-Q8_0.gguf` 2,056,415,104
+bytes, sha256 `9dd11c8adb910058…` (self-recorded anchors, the plan/0001
+precedent).
+
+Baselines: full offload on the pair, layer split, pp512 699.14, tg128
+39.93 ± 0.02 (the WSL2 record's class, its 41.90 within the OS delta).
+
+The server at the production shape (262144 f16 unified KV, one slot):
+prefill 626 t/s at 16.8k fill, decode 36.25 t/s, and the graphs-reused
+counter finally visible in a log: 158 of 160. At two slots the decodes
+never co-scheduled: slot 1's 16.8k prefill starved slot 0's decode to
+4.93 t/s (26.99 clean after), and both prefills slowed to the 440 to 500
+t/s class. The server-level parallelism question is scheduling, not
+hardware.
+
+The hardware answer, `llama-batched-bench` (4k fill, 128 tokens, `-npl
+1,2,4,8`):
+
+| batch | aggregate tg | per-sequence |
+|---|---|---|
+| 1 | 39.01 | 39.0 |
+| 2 | 59.97 | 30.0 |
+| 4 | 71.29 | 17.8 |
+| 8 | 81.76 | 10.2 |
+
+Two conclusions. The per-pass weight stream amortizes exactly as
+predicted: 2.1x aggregate at eight slots, prefill flat at 689 t/s at
+every batch. And the limiter at batch 8 is the fork's generic batched
+matmul for M greater than 1 (plan/0003's owed gemm, now with a rig-scale
+payoff): the batched forward costs 97.8 ms against 25.6 ms single-stream,
+far above the KV-arithmetic floor, so an optimized batched PQ2_0 matmul
+is the lever that pushes the aggregate past 100. The draft-with-dflash2
+A/B is queued for the next window (the head and the PQ2_0 target it was
+calibrated against are both on disk and hashed); overlap-the-pair's
+backport is scoped by the split-buffer finding above.
+
+Ops notes of the round: port 8090 belongs to another user's service (the
+sweep's instant 501s), a bare `wait` in a script that backgrounds a
+server waits on the server too (the timing lines never ran; the servers'
+own slot logs carried the numbers), and `pkill -f` matched this shell's
+own command text again, the recorded 2026-09-21 trap.
