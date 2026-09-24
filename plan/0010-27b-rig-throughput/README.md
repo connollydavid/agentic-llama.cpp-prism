@@ -156,3 +156,45 @@ sweep's instant 501s), a bare `wait` in a script that backgrounds a
 server waits on the server too (the timing lines never ran; the servers'
 own slot logs carried the numbers), and `pkill -f` matched this shell's
 own command text again, the recorded 2026-09-21 trap.
+
+### draft-with-dflash2: the head refuses this fork; n-gram measured neutral
+
+The published head does not load: the fork's dflash loader expects 81
+tensors and the DFlash2 file carries 58 (`done_getting_tensors: wrong
+number of tensors; expected 81, got 58`, the loader at
+src/models/dflash.cpp). The vendor's card says drafters for newer
+releases need their one-time conversion plus fork patches, shipped as a
+prebuilt CUDA 13.3 sm120 runtime and a build-runtime.sh against newer
+mainline. Landing it here is a bounded port of those patches, scoped the
+same way as the split-buffer backport; until then the dflash lever is
+refused with the load error on the record.
+
+The fork's in-tree n-gram drafting, measured on the same payload
+(`--spec-type ngram-map-k --spec-draft-n-max 4`): 39.60 tok/s decode with
+3 of 256 tokens accepted and the eval time unchanged at 25.25 ms per
+token, against the 39.93 no-draft baseline. Neutral on fresh-generation
+text, as the method's nature predicts; it stays a free option for
+repetitive workloads.
+
+### rig-kernel-ladder: re-aimed by measurement
+
+The single-stream ladder steps (launch kill, quantize fusion, norm
+fusion) are refused for this milestone in favor of the lever the
+amortization table ranks above them: the batched M greater than 1 matmul
+for PQ2_0, whose measured cost is the whole gap between the 81.76 tok/s
+aggregate at batch 8 and the KV floor (the batched forward at 97.8 ms
+against 25.6 single stream, plan/0003's owed gemm at rig scale). The
+kernel budget that justified the ladder at single-stream scale belongs,
+at serving scale, to the batched path; the ladder itself remains recorded
+in plan/0009 for the 1650 program where single stream is the regime.
+
+### Milestone close
+
+Every task is landed or refused with numbers on the record: the
+amortization table (batch-the-server, landed), the split-buffer refusal
+with the load error and the backport scope (overlap-the-pair, refused),
+the dflash load refusal plus the n-gram measurement (draft-with-dflash2,
+refused with data), and the measured re-aim of the kernel ladder. The
+standing throughput levers for the next milestone: the batched PQ2_0
+matmul, the split-buffer backport, the dflash runtime patches, and the
+server's decode co-phasing.

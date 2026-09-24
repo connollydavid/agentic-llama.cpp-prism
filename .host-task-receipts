@@ -31,3 +31,31 @@
     reason = call/0008
     tool = host-lifecycle@0.54.2
     recorded = 2026-09-24
+
+[receipt "plan/0010#batch-the-server"]
+    disposition = done
+    verify = the aggregate table with its commands lands here
+    evidence = plan/0010 Results: the -npl 1,2,4,8 amortization table (39.01/59.97/71.29/81.76 tok/s, pp flat 689) with commands, and the server scheduling observation
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
+
+[receipt "plan/0010#overlap-the-pair"]
+    disposition = done
+    verify = before and after full-offload tg128 with command lines, or the
+    evidence = plan/0010 Results: the split-buffer refusal, the load error at llama-model.cpp:1097, zero implementations in the fork's ggml-cuda, upstream db231ec0d proof, and the backport scope
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
+
+[receipt "plan/0010#rig-kernel-ladder"]
+    disposition = done
+    verify = per-change before and after tg128 with command lines; suites
+    evidence = plan/0010 Results: re-aimed by measurement to the batched M>1 matmul (97.8 ms vs 25.6 ms forward), the ladder stands in plan/0009 for the single-stream regime
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
+
+[receipt "plan/0010#draft-dflash2"]
+    disposition = done
+    verify = acceptance and before and after tok/s recorded here
+    evidence = plan/0010 Results: the dflash load refusal (81 expected, 58 tensors) with the vendor-runtime scope, plus the ngram-map-k measurement 39.60 tok/s, 3 of 256 accepted
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-24
