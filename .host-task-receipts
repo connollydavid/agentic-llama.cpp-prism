@@ -59,3 +59,17 @@
     evidence = plan/0010 Results: the dflash load refusal (81 expected, 58 tensors) with the vendor-runtime scope, plus the ngram-map-k measurement 39.60 tok/s, 3 of 256 accepted
     tool = host-lifecycle@0.54.2
     recorded = 2026-09-24
+
+[receipt "plan/0011#measure-battery"]
+    disposition = done
+    verify = the results land in this README with the probe and server
+    evidence = plan/0011 Results: fill curve to 261k, cross-talk, aggregate, single-card batched table, starvation observation, perplexity pair, with commands
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-25
+
+[receipt "plan/0011#design-tables"]
+    disposition = done
+    verify = the tables and guidance land here, every entry measured
+    evidence = plan/0011 The design: topology and per-class budgets, every entry measured
+    tool = host-lifecycle@0.54.2
+    recorded = 2026-09-25
