@@ -9,3 +9,4 @@
 - [0008 decode host-cost elimination](0008-decode-host-cost-elimination/README.md)
 - [0009 Bonsai-4B fast decode, CUDA first](0009-bonsai-4b-cuda-decode/README.md) (side quest, parked)
 - [0010 the 27B at rig scale](0010-27b-rig-throughput/README.md)
+- [0011 the two-card serving design](0011-two-card-serving-design/README.md)
