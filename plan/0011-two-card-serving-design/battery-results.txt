@@ -1,0 +1,45 @@
+fillcurve f16 fill=4096 rep=1 :: tokens=129 ttft=6.550s itl_mean=26.9ms p50=0.0 p95=55.5 p99=82.7 max=82.7
+fillcurve f16 fill=4096 rep=2 :: tokens=129 ttft=0.180s itl_mean=26.9ms p50=0.0 p95=55.5 p99=82.6 max=83.6
+fillcurve f16 fill=16384 rep=1 :: tokens=129 ttft=18.966s itl_mean=28.1ms p50=0.0 p95=58.2 p99=86.2 max=90.5
+fillcurve f16 fill=16384 rep=2 :: tokens=129 ttft=0.205s itl_mean=28.0ms p50=0.0 p95=58.0 p99=85.8 max=86.1
+fillcurve f16 fill=32768 rep=1 :: tokens=129 ttft=29.347s itl_mean=29.8ms p50=0.0 p95=61.3 p99=91.4 max=91.5
+fillcurve f16 fill=32768 rep=2 :: tokens=129 ttft=0.236s itl_mean=29.8ms p50=0.0 p95=61.3 p99=91.5 max=91.8
+fillcurve f16 fill=65536 rep=1 :: tokens=129 ttft=80.124s itl_mean=33.5ms p50=0.0 p95=68.6 p99=102.2 max=103.0
+fillcurve f16 fill=65536 rep=2 :: tokens=129 ttft=0.299s itl_mean=33.5ms p50=0.0 p95=68.7 p99=102.2 max=102.7
+fillcurve f16 fill=131072 rep=1 :: tokens=129 ttft=217.211s itl_mean=40.9ms p50=35.5 p95=82.6 p99=89.3 max=123.5
+fillcurve f16 fill=131072 rep=2 :: tokens=129 ttft=0.421s itl_mean=40.5ms p50=36.5 p95=82.6 p99=123.5 max=123.8
+fillcurve f16 fill=196608 rep=1 :: tokens=129 ttft=311.084s itl_mean=48.4ms p50=9.3 p95=97.4 p99=145.0 max=145.3
+fillcurve f16 fill=196608 rep=2 :: tokens=129 ttft=0.555s itl_mean=47.9ms p50=8.1 p95=97.0 p99=101.1 max=145.2
+fillcurve f16 fill=261120 rep=1 :: tokens=129 ttft=391.133s itl_mean=55.7ms p50=0.0 p95=112.7 p99=165.9 max=166.1
+fillcurve f16 fill=261120 rep=2 :: tokens=129 ttft=0.665s itl_mean=55.3ms p50=11.7 p95=111.0 p99=132.9 max=166.4
+crosstalk A-solo :: tokens=129 ttft=1.161s itl_mean=28.1ms p50=0.0 p95=57.9 p99=86.1 max=86.3
+crosstalk A-while-B-decodes :: tokens=129 ttft=0.233s itl_mean=28.1ms p50=0.0 p95=58.0 p99=86.2 max=86.4
+crosstalk B-concurrent :: tokens=129 ttft=25.264s itl_mean=28.1ms p50=0.0 p95=58.3 p99=86.3 max=87.0
+aggregate two-instance wall=3.9s combined=66.3 tok/s
+aggregate A :: tokens=129 ttft=0.209s itl_mean=28.2ms p50=0.0 p95=57.7 p99=86.5 max=86.6
+aggregate B :: tokens=129 ttft=0.207s itl_mean=28.2ms p50=0.0 p95=57.7 p99=86.1 max=86.4
+phase4 done
+ub=512 server failed
+ub=128 server failed
+ub=64 server failed
+ppl PTQ1_0 :: 
+ppl PQ2_0  :: 
+ALL PHASES COMPLETE 2026-09-25T01:18:21+01:00
+ PRODUCTION_RESTORED
+recovery phase4 done 2026-09-25T01:27:52+01:00
+|    PP |     TG |    B |   N_KV |   T_PP s | S_PP t/s |   T_TG s | S_TG t/s |      T s |    S t/s |
+|-------|--------|------|--------|----------|----------|----------|----------|----------|----------|
+|  4096 |    128 |    1 |   4224 |    5.963 |   686.90 |    3.468 |    36.91 |    9.431 |   447.89 |
+|  4096 |    128 |    2 |   8448 |   11.907 |   687.98 |    4.282 |    59.79 |   16.189 |   521.83 |
+|  4096 |    128 |    4 |  16896 |   23.815 |   687.96 |    7.135 |    71.76 |   30.950 |   545.91 |
+|  4096 |    128 |    8 |  33792 |   47.619 |   688.13 |   12.487 |    82.01 |   60.106 |   562.21 |
+recovery phase4 done 2026-09-25T01:30:13+01:00
+starvation ub=512 :: slotA-while-B-prefills tokens=129 ttft=50.195s itl_mean=36.2ms p50=0.0 p95=74.4 p99=110.6 max=110.7
+starvation ub=512 :: slotB-latecomer tokens=129 ttft=28.196s itl_mean=36.2ms p50=0.0 p95=74.3 p99=110.9 max=111.1
+starvation ub=128 :: slotA-while-B-prefills tokens=129 ttft=63.574s itl_mean=36.2ms p50=0.0 p95=74.8 p99=111.2 max=111.4
+starvation ub=128 :: slotB-latecomer tokens=129 ttft=41.487s itl_mean=36.4ms p50=0.0 p95=74.6 p99=111.1 max=111.1
+starvation ub=64 :: slotA-while-B-prefills tokens=129 ttft=84.714s itl_mean=36.2ms p50=0.0 p95=74.8 p99=111.2 max=111.4
+starvation ub=64 :: slotB-latecomer tokens=129 ttft=62.512s itl_mean=37.0ms p50=0.0 p95=82.5 p99=111.9 max=157.0
+recovery phase5 done 2026-09-25T01:34:25+01:00
+ppl PTQ1_0 :: PPL = 4.9591
+ppl PQ2_0 :: PPL = 4.9584
