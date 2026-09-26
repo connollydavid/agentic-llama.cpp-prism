@@ -158,3 +158,32 @@ so nothing else buys rig-scale throughput). The open follow-up is the
 unified-KV A/B, and the production-migration question (replacing the
 W4A16 service with these instances) belongs to the neighbor project's
 call, with the numbers above as the offer.
+
+### The topology A/B (2026-09-26): shared across cards loses 4.5x
+
+The operator's A/B, eight concurrent 30k prefills each followed by 128
+decode tokens, identical payloads both legs:
+
+| leg | shape | wall | per-slot prefill rates |
+|---|---|---|---|
+| A | two independent instances, one per card, 4 slots each, KV per card | **229.9 s** | 468 to 512 t/s per slot (one slot per instance at about 140, co-scheduling its prefill against three decoders with no starvation) |
+| B | one shared instance, both cards, layer split, `--kv-unified`, 8 slots | **1033.5 s** | 483, then 336, 265, 217, 182, 167, 145, and the last slot at 31.6 t/s |
+
+Leg A's aggregate prefill is about 1,080 t/s across the pair
+(work-conserving, matching the batched-bench finding that concurrent
+prefill does not beat the solo rate); leg B degrades with queue depth
+until the eighth slot prefills 15x slower than the first, and its
+per-slot decode windows run 659 to 956 s for 128 tokens, most of that
+queue time behind other slots' prefills.
+The decode side stands on the earlier tables: two instances at four
+slots each deliver about 143 t/s aggregate against the shared
+instance's 82 at eight. The confound is named: leg B differs from
+production-line sharing in both the layer split and the unified KV, and
+the clean separator remains the `unified-kv-ab` follow-up. What the A/B
+settles regardless: for this workload the per-card-instance topology
+wins prefill 4.5x and decode 1.75x, and the shared shape's only
+advantage is the single weights copy (6.7 GiB), which this workload
+spends immediately on serialization. The neighbor production service
+runs the shared shape with the W4A16 file; its long-context decode
+experience rhymes with leg B's curve, which is that project's thread to
+pull, offered on the record here.
