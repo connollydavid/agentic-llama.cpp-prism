@@ -187,3 +187,25 @@ spends immediately on serialization. The neighbor production service
 runs the shared shape with the W4A16 file; its long-context decode
 experience rhymes with leg B's curve, which is that project's thread to
 pull, offered on the record here.
+
+### The full-window A/B (2026-09-26): two 255k sessions in parallel
+
+The capacity question the operator named: two full context windows in
+parallel, or more. At f16 a full 256k window is 16 GiB of KV, so the rig
+tops out at two full windows in either topology (the shared copy frees
+about 7 GiB, a third window at roughly 110k depth, not a third full one;
+the q8_0 dial would double the count and was decided against). The A/B
+ran two distinct ~255k prompts end to end:
+
+| leg | shape | wall | detail |
+|---|---|---|---|
+| A | two independent instances, full window each | **1016.6 s** | both TTFT about 1,008 s (prefills concurrent at about 253 t/s per card), then ITL 55.0 and 55.1 ms, byte-identical to the solo full-window measurement |
+| B | one shared instance, 524288 unified pool, 2 slots | **over 2,700 s, incomplete** | neither session reached its first token; at the 2,685 s mark one slot sat at 77 percent of its prefill at 71 t/s |
+
+Two findings beyond the verdict. Concurrent full prefills run at 253
+t/s per card against 668 solo: the host CPU is the shared resource
+during prefill (both instances default to `-t 8` on 8 cores), so the
+deployment should split threads (`-t 4` each) or stagger long prefills;
+that tuning point is open. And leg A is the design's headline claim
+proven at the hardest operating point: two full 256k sessions live at
+once, prefilling concurrently, each decoding at its solo speed.
